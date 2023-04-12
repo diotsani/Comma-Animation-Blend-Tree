@@ -7,11 +7,16 @@ using UnityEngine.Serialization;
 public class Move : MonoBehaviour
 {
     public float speed;
+    private float normalSpeed;
+    private float runSpeed;
+
+
     public float jumpForce;
     public float jumpMultiplier;
     [Header("On Move Parameters")]
-    public float moveSpeed;
-    public float currentMoveVelocity;
+    public float moveHorizontal;
+    public float onMoveSpeed;
+    public float moveAnimationValue;
     public float maxWalkVelocity = 1.3f;
     public float maxRunVelocity = 2.3f;
     [Header("On Air Parameters")]
@@ -42,41 +47,44 @@ public class Move : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        normalSpeed = speed;
+        runSpeed = speed * 1.8f;
     }
 
     void Update()
     {
+        PlayerFlip();
+
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y);
+        moveHorizontal = Mathf.Abs(Input.GetAxis("Horizontal"));
+        Debug.Log($"Move Horizontal: {moveHorizontal}");
 
-        moveSpeed = Input.GetKey(KeyCode.LeftShift) ? 2 : 1;
+        onMoveSpeed = Input.GetKey(KeyCode.LeftShift) ? 2 : 1;
 
-        if (Input.GetAxis("Horizontal") !=0 && moveSpeed >= 2)
+        if (Input.GetAxis("Horizontal") !=0 && onMoveSpeed >= 2)
         {
+            speed = runSpeed;
             //currentMoveVelocity -= moveSpeed * Time.deltaTime;
-            if (currentMoveVelocity < 2) currentMoveVelocity = 2;
-            if(currentMoveVelocity < maxRunVelocity) currentMoveVelocity += moveSpeed * Time.deltaTime;
+            if (moveAnimationValue < 2) moveAnimationValue = 2;
+            if(moveAnimationValue < maxRunVelocity) moveAnimationValue += onMoveSpeed * Time.deltaTime;
             Debug.Log("Run");
+    
         }
-        else if (Input.GetAxis("Horizontal")!=0 && moveSpeed == 1)
+        else if (Input.GetAxis("Horizontal")!=0 && onMoveSpeed == 1)
         {
-            if (currentMoveVelocity < 1) currentMoveVelocity = 1;
-            if(currentMoveVelocity < maxWalkVelocity) currentMoveVelocity += moveSpeed * Time.deltaTime;
-            if (currentMoveVelocity > maxWalkVelocity) currentMoveVelocity = maxWalkVelocity;
+            speed = normalSpeed;
+            var t = (maxWalkVelocity + 1 )/2;
+            if (moveAnimationValue < t) moveAnimationValue = t;
+            //if (currentMoveVelocity < maxWalkVelocity) currentMoveVelocity += moveSpeed * Time.deltaTime;
+            if (moveHorizontal >= 1) moveAnimationValue += onMoveSpeed * Time.deltaTime;
+            if (moveAnimationValue > maxWalkVelocity) moveAnimationValue = maxWalkVelocity;
             Debug.Log("Walk");
         }
         else
         {
-            currentMoveVelocity = 0;
+            moveAnimationValue = 0;
         }
 
-        if (Input.GetAxis("Horizontal") > 0f)
-        {
-            transform.localScale = new Vector3(1f, 1f, 1f);
-        }
-        else if (Input.GetAxis("Horizontal") < 0f)
-        {
-            transform.localScale = new Vector3(-1f, 1f, 1f);
-        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -105,8 +113,9 @@ public class Move : MonoBehaviour
         }
         isGrounded = Physics2D.OverlapCircle(legs.transform.position, radius, LayerMask.GetMask("Ground"));
         var groundValue = isGrounded ? 0f : 1f;
+
         
-        anim.SetFloat(XSpeed,currentMoveVelocity);
+        anim.SetFloat(XSpeed,moveAnimationValue);
         anim.SetFloat(YSpeed, currentAirVelocity);
         anim.SetFloat(Grounded, groundValue);
     }
@@ -126,6 +135,17 @@ public class Move : MonoBehaviour
             currentAirVelocity = maxJumpTime;
             anim.SetBool(EndJump,true);
             Debug.Log("End Jump");
+        }
+    }
+    private void PlayerFlip()
+    {
+        if (Input.GetAxis("Horizontal") > 0f)
+        {
+            transform.localScale = new Vector3(1f, 1f, 1f);
+        }
+        else if (Input.GetAxis("Horizontal") < 0f)
+        {
+            transform.localScale = new Vector3(-1f, 1f, 1f);
         }
     }
 }

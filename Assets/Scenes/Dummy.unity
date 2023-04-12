@@ -1221,6 +1221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  moveHorizontal: 0
   jumpForce: 10
   jumpMultiplier: 50
   moveSpeed: 1
