@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 
 public class Move : MonoBehaviour
 {
+    private PlayerControls playerControls;
     public float speed;
     private float normalSpeed;
     private float runSpeed;
@@ -44,24 +45,36 @@ public class Move : MonoBehaviour
     private static readonly int Jump = Animator.StringToHash("JumpValue");
     private static readonly int EndJump = Animator.StringToHash("OnEndJump");
 
+    private void Awake() 
+    {
+        playerControls = new PlayerControls();
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         normalSpeed = speed;
         runSpeed = speed * 1.8f;
     }
-
+    
+    private void OnEnable()
+    {
+        playerControls.PlayerActions.Enable();
+    }
+    private void OnDisable()
+    {
+        playerControls.PlayerActions.Disable();
+    }
     void Update()
     {
         PlayerFlip();
 
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y);
-        moveHorizontal = Mathf.Abs(Input.GetAxis("Horizontal"));
+        moveHorizontal = Mathf.Abs(playerControls.PlayerActions.Movement.ReadValue<Vector2>().x);
         Debug.Log($"Move Horizontal: {moveHorizontal}");
 
         onMoveSpeed = Input.GetKey(KeyCode.LeftShift) ? 2 : 1;
 
-        if (Input.GetAxis("Horizontal") !=0 && onMoveSpeed >= 2)
+        if (moveHorizontal == 1 && onMoveSpeed >= 2)
         {
             speed = runSpeed;
             //currentMoveVelocity -= moveSpeed * Time.deltaTime;
@@ -70,13 +83,13 @@ public class Move : MonoBehaviour
             Debug.Log("Run");
     
         }
-        else if (Input.GetAxis("Horizontal")!=0 && onMoveSpeed == 1)
+        else if (moveHorizontal == 1 && onMoveSpeed == 1)
         {
             speed = normalSpeed;
             var t = (maxWalkVelocity + 1 )/2;
-            if (moveAnimationValue < t) moveAnimationValue = t;
+            if (moveAnimationValue < 1) moveAnimationValue = 1;
             //if (currentMoveVelocity < maxWalkVelocity) currentMoveVelocity += moveSpeed * Time.deltaTime;
-            if (moveHorizontal >= 1) moveAnimationValue += onMoveSpeed * Time.deltaTime;
+            moveAnimationValue += onMoveSpeed * Time.deltaTime;
             if (moveAnimationValue > maxWalkVelocity) moveAnimationValue = maxWalkVelocity;
             Debug.Log("Walk");
         }
@@ -114,7 +127,6 @@ public class Move : MonoBehaviour
         isGrounded = Physics2D.OverlapCircle(legs.transform.position, radius, LayerMask.GetMask("Ground"));
         var groundValue = isGrounded ? 0f : 1f;
 
-        
         anim.SetFloat(XSpeed,moveAnimationValue);
         anim.SetFloat(YSpeed, currentAirVelocity);
         anim.SetFloat(Grounded, groundValue);
