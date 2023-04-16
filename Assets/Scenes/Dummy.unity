@@ -608,7 +608,7 @@ Transform:
   m_GameObject: {fileID: 1155456367}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -13.4, z: 0}
-  m_LocalScale: {x: 30, y: 1, z: 1}
+  m_LocalScale: {x: 60, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1577452400}
@@ -862,7 +862,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1577452400}
   - component: {fileID: 1577452401}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1229,14 +1229,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24f882d98a9237047895221bacd048c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animationState: 0
+  animationController: {fileID: 0}
   speed: 5
   jumpForce: 10
   jumpMultiplier: 50
-  moveHorizontal: 0
+  groundValue: 0
+  horizontalInput: 0
+  xValue: 0
   onMoveSpeed: 0
   moveAnimationValue: 0
   maxWalkVelocity: 1.45
   maxRunVelocity: 2.3
+  endMoveVelocity: 0.5
   airSpeed: 1
   currentAirVelocity: 0
   maxAirVelocity: 1.24
@@ -1246,6 +1251,13 @@ MonoBehaviour:
   onEndJump: 0
   currentJumpVelocity: 0
   jumpDecrement: 0
+  maxInteractValue: 0
+  currentInteractValue: 0
+  moveInteractValue: 0
+  maxMoveInteractValue: 0.4
+  isInteract: 0
+  onPush: 1
+  onPull: 0
   anim: {fileID: 2116776009}
   legs: {fileID: 1623496991}
   radius: 0.2
