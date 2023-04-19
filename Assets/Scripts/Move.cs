@@ -141,7 +141,6 @@ public class Move : MonoBehaviour
             animationState = AnimationsState.EndMove;
             moveAnimationValue = endMoveVelocity;
         }
-        else moveAnimationValue = 0;
 
         if (moveAnimationValue > 0) moveAnimationValue -= onMoveSpeed * Time.deltaTime;
         else if (moveAnimationValue < 0)
@@ -184,6 +183,7 @@ public class Move : MonoBehaviour
                 anim.SetBool(EndMove, false);
                 isInteract = true;
                 currentFacingDirection = transform.localScale.x;
+                currentInteractValue = currentFacingDirection;
                 animationState = AnimationsState.Interact;
                 maxInteractValue = GetInteractValue();
             }
@@ -192,7 +192,6 @@ public class Move : MonoBehaviour
         if (isInteract)
         {
             if(horizontalInput != 0)currentInteractValue = horizontalInput * currentFacingDirection;
-            else currentInteractValue = currentFacingDirection;
 
             if (xValue > 0 && moveInteractValue < maxMoveInteractValue)
             {
