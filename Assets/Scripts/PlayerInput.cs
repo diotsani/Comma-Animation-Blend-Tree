@@ -5,62 +5,63 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 
-public class Move : MonoBehaviour
+public class PlayerInput : MonoBehaviour
 {
     private PlayerControls playerControls;
     public AnimationsState animationState;
     public AnimationController animationController;
+    [Header("Parameters")]
     public float speed;
     private float normalSpeed;
     private float runSpeed;
     public float jumpForce;
     public float jumpMultiplier;
-    public float groundValue;
+    //public float groundValue;
     [Header("On Move Parameters")]
-    public float horizontalInput;
-    public float xValue;
-    public float onMoveSpeed;
-    public float moveAnimationValue;
-    public float maxWalkVelocity = 1.3f;
-    public float maxRunVelocity = 2.3f;
-    public float endMoveVelocity = 0.6f;
-    [Header("On Air Parameters")]
-    public float airSpeed = 1f;
-    public float currentAirVelocity;
-    public float maxAirVelocity = 0.38f;
-    public float onLoopingJump = 0.18f;
-    public float timeEndJump = 0.18f;
-    public float maxJumpTime = 0.18f;
-    public bool onEndJump;
-    [Header("On Jump Parameter")]
-    public float currentJumpVelocity;
-    public float jumpDecrement;
-    [Header("On Interact Parameters")]
-    public float currentFacingDirection;
-    public float maxInteractValue;
-    public float currentInteractValue;
-    public float moveInteractValue;
-    public float maxMoveInteractValue;
-    public bool isInteract;
-    public bool onPush;
-    public bool onPull;
+    private float _horizontalInput;
+    private float _moveSpeed;
+    public float HorizontalInput => _horizontalInput;
+    public float MoveSpeed => _moveSpeed;
+    // public float xValue;
+    // public float moveAnimationValue;
+    // public float maxWalkVelocity = 1.3f;
+    // public float maxRunVelocity = 2.3f;
+    // public float endMoveVelocity = 0.6f;
+    // [Header("On Jump Parameters")]
+    // public float airSpeed = 1f;
+    // public float currentJumpVelocity;
+    // public float maxJumpVelocity = 0.38f;
+    // public float onLoopingJump = 0.18f;
+    // public float timeEndJump = 0.18f;
+    // public float maxJumpTime = 0.18f;
+    // public bool onEndJump;
+    // [Header("On Interact Parameters")]
+    // public float currentFacingDirection;
+    // public float currentInteractValue;
+    // public float moveInteractValue;
+    // public float maxMoveInteractValue;
+    // public bool isInteract;
+    // public bool onPush;
+    // public bool onPull;
 
     [Header("Components")]
     public Animator anim;
     public GameObject legs;
     public float radius;
     public Rigidbody2D rb;
-    public bool isGrounded;
-    public bool isOnAir;
-    private static readonly int Grounded = Animator.StringToHash("Grounded");
-    private static readonly int XSpeed = Animator.StringToHash("XSpeed");
-    private static readonly int YSpeed = Animator.StringToHash("YSpeed");
-    private static readonly int EndMove = Animator.StringToHash("OnEndMove");
-    private static readonly int Jump = Animator.StringToHash("JumpValue");
-    private static readonly int EndJump = Animator.StringToHash("OnEndJump");
-    private static readonly int Interacted = Animator.StringToHash("OnInteracted");
-    private static readonly int InteractMoveValue = Animator.StringToHash("InteractMoveValue");
-    private static readonly int InteractValue = Animator.StringToHash("InteractValue");
+    private bool _isGrounded;
+    public bool IsGrounded => _isGrounded;
+    
+    // private static readonly int Grounded = Animator.StringToHash("Grounded");
+    // private static readonly int XSpeed = Animator.StringToHash("XSpeed");
+    // private static readonly int YSpeed = Animator.StringToHash("YSpeed");
+    // private static readonly int EndMove = Animator.StringToHash("OnEndMove");
+    // private static readonly int Jump = Animator.StringToHash("JumpValue");
+    // private static readonly int EndJump = Animator.StringToHash("OnEndJump");
+    // private static readonly int Interacted = Animator.StringToHash("OnInteracted");
+    // private static readonly int InteractMoveValue = Animator.StringToHash("InteractMoveValue");
+    // private static readonly int InteractValue = Animator.StringToHash("InteractValue");
+    
     private void Awake()
     {
         playerControls = new PlayerControls();
@@ -84,24 +85,23 @@ public class Move : MonoBehaviour
     {
         PlayerFlip();
 
-        horizontalInput = playerControls.PlayerActions.Movement.ReadValue<Vector2>().x;
-        rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
-        xValue = Mathf.Abs(horizontalInput);
+        _horizontalInput = playerControls.PlayerActions.Movement.ReadValue<Vector2>().x;
+        rb.velocity = new Vector2(_horizontalInput * speed, rb.velocity.y);
 
-        onMoveSpeed = Input.GetKey(KeyCode.LeftShift) ? 2 : 1;
+        _moveSpeed = Input.GetKey(KeyCode.LeftShift) ? 2 : 1;
 
-        isGrounded = Physics2D.OverlapCircle(legs.transform.position, radius, LayerMask.GetMask("Ground"));
-        groundValue = isGrounded ? 0f : 1f;
+        _isGrounded = Physics2D.OverlapCircle(legs.transform.position, radius, LayerMask.GetMask("Ground"));
+        groundValue = _isGrounded ? 0f : 1f;
 
-        if (xValue == 1 && onMoveSpeed == 1 && isGrounded)
+        if (xValue == 1 && _moveSpeed == 1 && _isGrounded)
         {
             WalkState();
         }
-        else if (xValue == 1 && onMoveSpeed >= 2 && isGrounded)
+        else if (xValue == 1 && _moveSpeed >= 2 && _isGrounded)
         {
             RunState();
         }
-        else if (xValue == 0 && isGrounded)
+        else if (xValue == 0 && _isGrounded)
         {
             EndMoveState();
         }
@@ -110,7 +110,7 @@ public class Move : MonoBehaviour
         InteractState();
 
         anim.SetFloat(XSpeed, moveAnimationValue);
-        anim.SetFloat(YSpeed, currentAirVelocity);
+        anim.SetFloat(YSpeed, currentJumpVelocity);
         anim.SetFloat(Grounded, groundValue);
         anim.SetBool(Interacted, isInteract);
         anim.SetFloat(InteractValue, currentInteractValue);
@@ -123,7 +123,7 @@ public class Move : MonoBehaviour
         speed = normalSpeed;
 
         if (moveAnimationValue < 1) moveAnimationValue = 1; // Set First Value to Play Start Walk Animation
-        if (moveAnimationValue < maxWalkVelocity) moveAnimationValue += onMoveSpeed * Time.deltaTime;
+        if (moveAnimationValue < maxWalkVelocity) moveAnimationValue += _moveSpeed * Time.deltaTime;
         else if (moveAnimationValue > maxWalkVelocity) moveAnimationValue = maxWalkVelocity;
     }
     private void RunState()
@@ -132,7 +132,7 @@ public class Move : MonoBehaviour
         speed = runSpeed;
 
         if (moveAnimationValue < 2) moveAnimationValue = 2; // Set First Value to Play Start Run Animation
-        if (moveAnimationValue < maxRunVelocity) moveAnimationValue += onMoveSpeed * Time.deltaTime;
+        if (moveAnimationValue < maxRunVelocity) moveAnimationValue += _moveSpeed * Time.deltaTime;
     }
     private void EndMoveState()
     {
@@ -142,7 +142,7 @@ public class Move : MonoBehaviour
             moveAnimationValue = endMoveVelocity;
         }
 
-        if (moveAnimationValue > 0) moveAnimationValue -= onMoveSpeed * Time.deltaTime;
+        if (moveAnimationValue > 0) moveAnimationValue -= _moveSpeed * Time.deltaTime;
         else if (moveAnimationValue < 0)
         {
             animationState = AnimationsState.Idle;
@@ -153,15 +153,14 @@ public class Move : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            currentAirVelocity = maxAirVelocity;
+            currentJumpVelocity = maxJumpVelocity;
             anim.SetFloat(Jump, 2);
             rb.AddForce(new Vector2(rb.velocity.x, jumpForce * jumpMultiplier));
-            currentJumpVelocity = rb.velocity.y;
         }
 
-        if (isGrounded)
+        if (_isGrounded)
         {
-            currentAirVelocity = maxAirVelocity;
+            currentJumpVelocity = maxJumpVelocity;
             anim.SetBool(EndJump, false);
         }
         else
@@ -171,7 +170,7 @@ public class Move : MonoBehaviour
     }
     private void InteractState()
     {
-        if (Input.GetKeyDown(KeyCode.E) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.E) && _isGrounded)
         {
             if (isInteract)
             {
@@ -185,13 +184,12 @@ public class Move : MonoBehaviour
                 currentFacingDirection = transform.localScale.x;
                 currentInteractValue = currentFacingDirection;
                 animationState = AnimationsState.Interact;
-                maxInteractValue = GetInteractValue();
             }
         }
 
         if (isInteract)
         {
-            if(horizontalInput != 0)currentInteractValue = horizontalInput * currentFacingDirection;
+            if(_horizontalInput != 0)currentInteractValue = _horizontalInput * currentFacingDirection;
 
             if (xValue > 0 && moveInteractValue < maxMoveInteractValue)
             {
@@ -213,17 +211,27 @@ public class Move : MonoBehaviour
         onEndJump = Physics2D.OverlapCircle(legs.transform.position, radius + this.timeEndJump, LayerMask.GetMask("Ground"));
         var jumpValue = onEndJump ? 1f : 2f;
         anim.SetFloat(Jump, jumpValue);
-        if (currentAirVelocity >= onLoopingJump)
+        if (currentJumpVelocity >= onLoopingJump)
         {
             //currentAirVelocity += Time.deltaTime;
-            currentAirVelocity -= airSpeed * Time.deltaTime;
+            currentJumpVelocity -= airSpeed * Time.deltaTime;
         }
 
-        if (onEndJump && currentAirVelocity >= maxJumpTime && currentAirVelocity < onLoopingJump)
+        if (onEndJump && currentJumpVelocity >= maxJumpTime && currentJumpVelocity < onLoopingJump)
         {
-            currentAirVelocity = maxJumpTime;
+            currentJumpVelocity = maxJumpTime;
             anim.SetBool(EndJump, true);
             Debug.Log("End Jump");
+        }
+    }
+    
+    private void UpdateAnimationsState()
+    {
+        switch (animationState)
+        {
+            case AnimationsState.Idle: anim.SetBool(EndMove, false); break;
+            case AnimationsState.Move: anim.SetBool(EndMove, false); break;
+            case AnimationsState.EndMove: anim.SetBool(EndMove, true); break;
         }
     }
     private void PlayerFlip()
@@ -238,16 +246,6 @@ public class Move : MonoBehaviour
             transform.localScale = new Vector3(-1f, 1f, 1f);
         }
     }
-    private void UpdateAnimationsState()
-    {
-        switch (animationState)
-        {
-            case AnimationsState.Idle: anim.SetBool(EndMove, false); break;
-            case AnimationsState.Move: anim.SetBool(EndMove, false); break;
-            case AnimationsState.EndMove: anim.SetBool(EndMove, true); break;
-        }
-    }
-
     public bool IsInteracted()
     {
         return isInteract;
