@@ -1230,12 +1230,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24f882d98a9237047895221bacd048c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animationState: 0
-  animationController: {fileID: 2116776010}
   speed: 5
   jumpForce: 10
   jumpMultiplier: 50
-  anim: {fileID: 2116776009}
   legs: {fileID: 1623496991}
   radius: 0.2
   rb: {fileID: 2116776004}
@@ -1281,21 +1278,18 @@ MonoBehaviour:
   maxWalkVelocity: 1.45
   maxRunVelocity: 2.3
   endMoveVelocity: 0.5
-  airSpeed: 1
+  jumpSpeed: 1
   jumpAnimationValue: 0
   maxJumpVelocity: 1.24
   maxLoopingJump: 0.84
   endJumpTime: 2.64
   maxJumpTime: 0.54
   onEndJump: 0
-  radius: 0
+  radius: 0.2
   currentFacingDirection: 0
-  currentInteractValue: 0
+  faceInteractValue: 0
   moveInteractValue: 0
-  maxMoveInteractValue: 0
-  isInteract: 0
-  onPush: 0
-  onPull: 0
+  maxMoveInteractValue: 0.2
 --- !u!1 &2117636187
 GameObject:
   m_ObjectHideFlags: 0
