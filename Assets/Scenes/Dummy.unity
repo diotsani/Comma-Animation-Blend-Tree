@@ -1105,6 +1105,7 @@ GameObject:
   - component: {fileID: 2116776007}
   - component: {fileID: 2116776008}
   - component: {fileID: 2116776009}
+  - component: {fileID: 2116776010}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1230,40 +1231,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationState: 0
-  animationController: {fileID: 0}
+  animationController: {fileID: 2116776010}
   speed: 5
   jumpForce: 10
   jumpMultiplier: 50
-  groundValue: 0
-  horizontalInput: 0
-  xValue: 0
-  onMoveSpeed: 0
-  moveAnimationValue: 0
-  maxWalkVelocity: 1.45
-  maxRunVelocity: 2.3
-  endMoveVelocity: 0.5
-  airSpeed: 1
-  currentAirVelocity: 0
-  maxAirVelocity: 1.24
-  onLoopingJump: 0.84
-  timeEndJump: 2.64
-  maxJumpTime: 0.54
-  onEndJump: 0
-  currentJumpVelocity: 0
-  jumpDecrement: 0
-  maxInteractValue: 0
-  currentInteractValue: 0
-  moveInteractValue: 0
-  maxMoveInteractValue: 0.4
-  isInteract: 0
-  onPush: 1
-  onPull: 0
   anim: {fileID: 2116776009}
   legs: {fileID: 1623496991}
   radius: 0.2
   rb: {fileID: 2116776004}
-  isGrounded: 0
-  isOnAir: 0
 --- !u!95 &2116776009
 Animator:
   serializedVersion: 4
@@ -1284,6 +1259,43 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2116776010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116776003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03d1454811ce494883d513c3b8b65aec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationState: 0
+  animator: {fileID: 0}
+  playerInput: {fileID: 0}
+  groundValue: 0
+  xValue: 0
+  onMoveSpeed: 0
+  moveAnimationValue: 0
+  maxWalkVelocity: 1.3
+  maxRunVelocity: 2.3
+  endMoveVelocity: 0.6
+  airSpeed: 1
+  jumpAnimationValue: 0
+  maxJumpVelocity: 0.38
+  maxLoopingJump: 0.18
+  endJumpTime: 0.18
+  maxJumpTime: 0.18
+  onEndJump: 0
+  radius: 0
+  currentFacingDirection: 0
+  currentInteractValue: 0
+  moveInteractValue: 0
+  maxMoveInteractValue: 0
+  isInteract: 0
+  onPush: 0
+  onPull: 0
 --- !u!1 &2117636187
 GameObject:
   m_ObjectHideFlags: 0

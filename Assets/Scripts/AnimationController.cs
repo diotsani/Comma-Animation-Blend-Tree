@@ -29,12 +29,13 @@ public class AnimationController : MonoBehaviour
     public float endMoveVelocity = 0.6f;
     [Header("On Jump Parameters")]
     public float airSpeed = 1f;
-    public float currentJumpVelocity;
+    public float jumpAnimationValue;
     public float maxJumpVelocity = 0.38f;
-    public float onLoopingJump = 0.18f;
-    public float timeEndJump = 0.18f;
+    public float maxLoopingJump = 0.18f;
+    public float endJumpTime = 0.18f;
     public float maxJumpTime = 0.18f;
     public bool onEndJump;
+    public float radius;
     [Header("On Interact Parameters")]
     public float currentFacingDirection;
     public float currentInteractValue;
@@ -61,10 +62,10 @@ public class AnimationController : MonoBehaviour
 
         MovementState();
         JumpState();
-        InteractState();
+        //InteractState();
 
         animator.SetFloat(XSpeed, moveAnimationValue);
-        animator.SetFloat(YSpeed, currentJumpVelocity);
+        animator.SetFloat(YSpeed, jumpAnimationValue);
         animator.SetFloat(Grounded, groundValue);
         animator.SetBool(Interacted, isInteract);
         animator.SetFloat(InteractValue, currentInteractValue);
@@ -134,74 +135,74 @@ public class AnimationController : MonoBehaviour
     }
     private void JumpState()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            currentJumpVelocity = maxJumpVelocity;
-            animator.SetFloat(Jump, 2);
-            rb.AddForce(new Vector2(rb.velocity.x, jumpForce * jumpMultiplier));
-        }
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     jumpAnimationValue = maxJumpVelocity;
+        //     animator.SetFloat(Jump, 2);
+        // }
 
-        if (isGrounded)
+        if (playerInput.IsGrounded)
         {
-            currentJumpVelocity = maxJumpVelocity;
+            jumpAnimationValue = maxJumpVelocity;
             animator.SetBool(EndJump, false);
         }
         else
         {
-            IncrementAirVelocity();
+            DecrementJumpVelocity();
         }
     }
-    private void InteractState()
+    // private void InteractState()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.E) && isGrounded)
+    //     {
+    //         if (isInteract)
+    //         {
+    //             isInteract = false;
+    //             animationState = AnimationsState.Idle;
+    //         }
+    //         else
+    //         {
+    //             animator.SetBool(EndMove, false);
+    //             isInteract = true;
+    //             currentFacingDirection = transform.localScale.x;
+    //             currentInteractValue = currentFacingDirection;
+    //             animationState = AnimationsState.Interact;
+    //         }
+    //     }
+    //
+    //     if (isInteract)
+    //     {
+    //         if(horizontalInput != 0)currentInteractValue = horizontalInput * currentFacingDirection;
+    //
+    //         if (xValue > 0 && moveInteractValue < maxMoveInteractValue)
+    //         {
+    //             moveInteractValue += 1 * Time.deltaTime;
+    //         }
+    //         else if (xValue == 0 && moveInteractValue > 0)
+    //         {
+    //             moveInteractValue = 0;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         currentInteractValue = 0;
+    //         moveInteractValue = 0;
+    //     }
+    // }
+    private void DecrementJumpVelocity()
     {
-        if (Input.GetKeyDown(KeyCode.E) && isGrounded)
+        //onEndJump = Physics2D.OverlapCircle(legs.transform.position, radius + this.endJumpTime, LayerMask.GetMask("Ground"));
+        onEndJump = playerInput.IsEndJump(radius, endJumpTime);
+        //var jumpValue = onEndJump ? 1f : 2f;
+        //animator.SetFloat(Jump, jumpValue);
+        if (jumpAnimationValue >= maxLoopingJump)
         {
-            if (isInteract)
-            {
-                isInteract = false;
-                animationState = AnimationsState.Idle;
-            }
-            else
-            {
-                animator.SetBool(EndMove, false);
-                isInteract = true;
-                currentFacingDirection = transform.localScale.x;
-                currentInteractValue = currentFacingDirection;
-                animationState = AnimationsState.Interact;
-            }
+            jumpAnimationValue -= airSpeed * Time.deltaTime;
         }
 
-        if (isInteract)
+        if (onEndJump && jumpAnimationValue >= maxJumpTime && jumpAnimationValue < maxLoopingJump)
         {
-            if(horizontalInput != 0)currentInteractValue = horizontalInput * currentFacingDirection;
-
-            if (xValue > 0 && moveInteractValue < maxMoveInteractValue)
-            {
-                moveInteractValue += 1 * Time.deltaTime;
-            }
-            else if (xValue == 0 && moveInteractValue > 0)
-            {
-                moveInteractValue = 0;
-            }
-        }
-        else
-        {
-            currentInteractValue = 0;
-            moveInteractValue = 0;
-        }
-    }
-    private void IncrementAirVelocity()
-    {
-        onEndJump = Physics2D.OverlapCircle(legs.transform.position, radius + this.timeEndJump, LayerMask.GetMask("Ground"));
-        var jumpValue = onEndJump ? 1f : 2f;
-        animator.SetFloat(Jump, jumpValue);
-        if (currentJumpVelocity >= onLoopingJump)
-        {
-            currentJumpVelocity -= airSpeed * Time.deltaTime;
-        }
-
-        if (onEndJump && currentJumpVelocity >= maxJumpTime && currentJumpVelocity < onLoopingJump)
-        {
-            currentJumpVelocity = maxJumpTime;
+            jumpAnimationValue = maxJumpTime;
             animator.SetBool(EndJump, true);
         }
     }
