@@ -1103,8 +1103,8 @@ GameObject:
   - component: {fileID: 2116776005}
   - component: {fileID: 2116776004}
   - component: {fileID: 2116776007}
-  - component: {fileID: 2116776008}
   - component: {fileID: 2116776009}
+  - component: {fileID: 2116776008}
   - component: {fileID: 2116776010}
   m_Layer: 0
   m_Name: Player
@@ -1272,21 +1272,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationState: 0
-  animator: {fileID: 0}
-  playerInput: {fileID: 0}
+  animator: {fileID: 2116776009}
+  playerInput: {fileID: 2116776008}
   groundValue: 0
   xValue: 0
   onMoveSpeed: 0
   moveAnimationValue: 0
-  maxWalkVelocity: 1.3
+  maxWalkVelocity: 1.45
   maxRunVelocity: 2.3
-  endMoveVelocity: 0.6
+  endMoveVelocity: 0.5
   airSpeed: 1
   jumpAnimationValue: 0
-  maxJumpVelocity: 0.38
-  maxLoopingJump: 0.18
-  endJumpTime: 0.18
-  maxJumpTime: 0.18
+  maxJumpVelocity: 1.24
+  maxLoopingJump: 0.84
+  endJumpTime: 2.64
+  maxJumpTime: 0.54
   onEndJump: 0
   radius: 0
   currentFacingDirection: 0

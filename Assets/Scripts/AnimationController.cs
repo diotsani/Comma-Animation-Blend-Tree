@@ -24,16 +24,16 @@ public class AnimationController : MonoBehaviour
     public float xValue;
     public float onMoveSpeed;
     public float moveAnimationValue;
-    public float maxWalkVelocity = 1.3f;
+    public float maxWalkVelocity = 1.45f;
     public float maxRunVelocity = 2.3f;
-    public float endMoveVelocity = 0.6f;
+    public float endMoveVelocity = 0.5f;
     [Header("On Jump Parameters")]
     public float airSpeed = 1f;
     public float jumpAnimationValue;
-    public float maxJumpVelocity = 0.38f;
-    public float maxLoopingJump = 0.18f;
-    public float endJumpTime = 0.18f;
-    public float maxJumpTime = 0.18f;
+    public float maxJumpVelocity = 1.24f;
+    public float maxLoopingJump = 0.84f;
+    public float endJumpTime = 2.64f;
+    public float maxJumpTime = 0.54f;
     public bool onEndJump;
     public float radius;
     [Header("On Interact Parameters")]
